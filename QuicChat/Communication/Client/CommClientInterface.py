@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class CommClientInterface(ABC):
+class CommInterface(ABC):
     def __init__(self, config):
         # Initialize communication parameters (e.g., URI for WebSocket connection)
         self._config = config
