@@ -2,19 +2,18 @@ from tinydb import TinyDB, Query
 
 import User
 
-
 class UserDB:
     def __init__(self, db_path):
         self.db = TinyDB(db_path)
         self.User = Query()
 
     def set_user(self, user):
-        user = {
+        user_DB = {
             'name': user.name,
             'email': user.email,
             'password': user.password
         }
-        return self.db.insert(user)
+        return self.db.insert(user_DB)
 
     def get_user(self, email):
         return self.db.search(self.User.email == email)

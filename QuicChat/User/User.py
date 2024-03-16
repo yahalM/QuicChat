@@ -1,17 +1,17 @@
+import binascii
 import json
 import re
 
 import bcrypt
 
-
 def hash_password(password):
     # Generate a salt and hash the password
     salt = bcrypt.gensalt()
-    return bcrypt.hashpw(password.encode(), salt)
-
+    hashed = bcrypt.hashpw(password.encode(), salt)
+    return binascii.hexlify(hashed).decode()  # Convert bytes to hex string for storage
 
 def check_password(user, password):
-    stored_password = user.password
+    stored_password = binascii.unhexlify(user.password.encode())
     return bcrypt.checkpw(password.encode(), stored_password)
 
 
