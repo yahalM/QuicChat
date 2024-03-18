@@ -2,8 +2,10 @@ import secrets
 import string
 import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To, Content
+from mailjet_rest import Client
+import os
 
-import User
+from User import User
 from UsersDB import UserDB
 
 # Temporary storage for forgot passwords (email -> temp password)
@@ -29,6 +31,34 @@ class UserContext:
 
         # 4. Return True and success message
         return True, "User successfully signed up."
+
+    def send_email_with_mailjet(self, to_email, temp_password):
+        api_key = '68a5836683b7a1b35c3c226b09a7b8e9'
+        api_secret = 'da00e372e026fe9119ad8336cc30e021'
+        mailjet = Client(auth=(api_key, api_secret), version='v3.1')
+        data = {
+            'Messages': [
+                {
+                    "From": {
+                        "Email": "duzan21@gmail.com",
+                        "Name": "David"
+                    },
+                    "To": [
+                    {
+                        "Email": "duzan21@gmail.com",
+                        "Name": "David"
+                    }
+                    ],
+                "Subject": "Temporary Password for QuicChat",
+                "TextPart": f"Your temporary password is: {temp_password}",
+                "HTMLPart": f"Your temporary password is: {temp_password}",
+                "CustomID": "QuicChatTempPasword"
+                }
+            ]
+        }
+        result = mailjet.send.create(data=data)
+        print(result.status_code)
+        print(result.json())
 
     def send_email_with_sendgrid(self, to_email, temp_password):
         SENDGRID_API_KEY = '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'
@@ -62,7 +92,7 @@ class UserContext:
 
         # Send the temporary password via email (mockup, replace with actual email sending code)
         print(f"Sending email to {email} with temporary password: {temp_password}")
-        self.send_email_with_sendgrid(email, temp_password)
+        self.send_email_with_mailjet(email, temp_password)
         # 3. Return True and success message
         return True, "Temporary password sent to your email."
 
@@ -71,9 +101,9 @@ db_path = 'users_example.json'
 user_context = UserContext(db_path)
 
 # Sign up a user
-signup_result, message = user_context.signup_user(User("Jane Doe", "yahalmoshe@gmail.com", "password123"))
+signup_result, message = user_context.signup_user(User("Jane Doe", "duzan21@gmail.com", "password123"))
 print(message)
 
 # Forgot password
-forgot_result, message = user_context.forgot_password("yahalmoshe@gmail.com")
+forgot_result, message = user_context.forgot_password("duzan21@gmail.com")
 print(message)
